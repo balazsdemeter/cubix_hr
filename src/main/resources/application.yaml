@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: smart
+
+hr:
+  year:
+    year_1: 10
+    year_2: 5
+    year_3: 2.5
+
+  percent:
+    percent_year_1: 0.1
+    percent_year_2: 0.05
+    percent_year_3: 0.02
+    percent_default: 0.0
