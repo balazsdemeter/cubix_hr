@@ -26,63 +26,63 @@ public class HrConfigurationProperties {
     }
 
     public static class Year {
-        private double year_1;
-        private double year_2;
-        private double year_3;
+        private double year_max;
+        private double year_med;
+        private double year_min;
 
-        public double getYear_1() {
-            return year_1;
+        public double getYear_max() {
+            return year_max;
         }
 
-        public void setYear_1(double year_1) {
-            this.year_1 = year_1;
+        public void setYear_max(double year_max) {
+            this.year_max = year_max;
         }
 
-        public double getYear_2() {
-            return year_2;
+        public double getYear_med() {
+            return year_med;
         }
 
-        public void setYear_2(double year_2) {
-            this.year_2 = year_2;
+        public void setYear_med(double year_med) {
+            this.year_med = year_med;
         }
 
-        public double getYear_3() {
-            return year_3;
+        public double getYear_min() {
+            return year_min;
         }
 
-        public void setYear_3(double year_3) {
-            this.year_3 = year_3;
+        public void setYear_min(double year_min) {
+            this.year_min = year_min;
         }
     }
 
     public static class Percent {
-        private double percent_year_1;
-        private double percent_year_2;
-        private double percent_year_3;
+        private double percent_year_max;
+        private double percent_year_med;
+        private double percent_year_min;
         private double percent_default;
 
-        public double getPercent_year_1() {
-            return percent_year_1;
+        public double getPercent_year_max() {
+            return percent_year_max;
         }
 
-        public void setPercent_year_1(double percent_year_1) {
-            this.percent_year_1 = percent_year_1;
+        public void setPercent_year_max(double percent_year_max) {
+            this.percent_year_max = percent_year_max;
         }
 
-        public double getPercent_year_2() {
-            return percent_year_2;
+        public double getPercent_year_med() {
+            return percent_year_med;
         }
 
-        public void setPercent_year_2(double percent_year_2) {
-            this.percent_year_2 = percent_year_2;
+        public void setPercent_year_med(double percent_year_med) {
+            this.percent_year_med = percent_year_med;
         }
 
-        public double getPercent_year_3() {
-            return percent_year_3;
+        public double getPercent_year_min() {
+            return percent_year_min;
         }
 
-        public void setPercent_year_3(double percent_year_3) {
-            this.percent_year_3 = percent_year_3;
+        public void setPercent_year_min(double percent_year_min) {
+            this.percent_year_min = percent_year_min;
         }
 
         public double getPercent_default() {

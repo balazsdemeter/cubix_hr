@@ -4,12 +4,12 @@ spring:
 
 hr:
   year:
-    year_1: 10
-    year_2: 5
-    year_3: 2.5
+    year_max: 10
+    year_med: 5
+    year_min: 2.5
 
   percent:
-    percent_year_1: 0.1
-    percent_year_2: 0.05
-    percent_year_3: 0.02
+    percent_year_max: 0.1
+    percent_year_med: 0.05
+    percent_year_min: 0.02
     percent_default: 0.0

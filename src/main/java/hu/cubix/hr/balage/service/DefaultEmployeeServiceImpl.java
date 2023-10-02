@@ -1,12 +1,11 @@
 package hu.cubix.hr.balage.service;
 
-import hu.cubix.hr.balage.model.Employee;
+import java.time.LocalDateTime;
 
 public class DefaultEmployeeServiceImpl implements EmployeeService {
 
     @Override
-    public int getPayRaisePercent(Employee employee) {
-        var salary = employee.getSalary();
-        return Double.valueOf(salary + (salary * 0.05)).intValue();
+    public double getPayRaisePercent(LocalDateTime workStart) {
+        return 0.05;
     }
 }

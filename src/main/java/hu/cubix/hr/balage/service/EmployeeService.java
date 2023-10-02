@@ -1,8 +1,8 @@
 package hu.cubix.hr.balage.service;
 
-import hu.cubix.hr.balage.model.Employee;
+import java.time.LocalDateTime;
 
 public interface EmployeeService {
 
-    int getPayRaisePercent(Employee employee);
+    double getPayRaisePercent(LocalDateTime workStart);
 }

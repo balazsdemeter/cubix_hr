@@ -21,12 +21,19 @@ public class HrApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        var employee = createEmployee();
-        salaryService.setSalary(employee);
-        System.out.println(employee.getSalary());
+        test(121, 192500);
+        test(61, 183750);
+        test(59, 176750);
+        test(29, 175000);
     }
 
-    private Employee createEmployee() {
-        return new Employee(1L, "munka", 175000, LocalDateTime.now().minusYears(5).minusMonths(7));
+    private void test(long months, Integer expectedSalary) {
+        var employee = createEmployee(months);
+        salaryService.setSalary(employee);
+        System.out.println("Expected salary: " + expectedSalary + ", calculated salary: " + employee.getSalary());
+    }
+
+    private Employee createEmployee(long months) {
+        return new Employee(1L, "munka", 175000, LocalDateTime.now().minusMonths(months));
     }
 }

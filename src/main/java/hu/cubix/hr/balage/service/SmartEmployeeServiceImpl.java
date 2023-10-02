@@ -3,50 +3,45 @@ package hu.cubix.hr.balage.service;
 import hu.cubix.hr.balage.config.HrConfigurationProperties;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Percent;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Year;
-import hu.cubix.hr.balage.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 
 public class SmartEmployeeServiceImpl implements EmployeeService {
+    private static final int MONTHS_PER_YEAR = 12;
 
-//    private static final double YEAR_10 = 10;
-//    private static final double YEAR_5 = 5;
-//    private static final double YEAR_2_5 = 2.5;
+//    private static final double YEAR_MAX = 10;
+//    private static final double YEAR_MED = 5;
+//    private static final double YEAR_MIN = 2.5;
 //
-//    private static final double PERCENT_10 = 0.1;
-//    private static final double PERCENT_05 = 0.05;
-//    private static final double PERCENT_002 = 0.02;
+//    private static final double PERCENT_MAX = 0.1;
+//    private static final double PERCENT_MED = 0.05;
+//    private static final double PERCENT_MIN = 0.02;
 //    private static final double PERCENT_DEFAULT = 0.0;
 
     @Autowired
     private HrConfigurationProperties properties;
 
     @Override
-    public int getPayRaisePercent(Employee employee) {
-        var workStart = employee.getWorkStart();
+    public double getPayRaisePercent(LocalDateTime workStart) {
         var currentLocalDateTime = LocalDateTime.now();
 
         Period period = Period.between(workStart.toLocalDate(), currentLocalDateTime.toLocalDate());
-        double months = (double) Math.round(period.get(ChronoUnit.MONTHS) / (double) 12 * 100) / 100;
-        double years = period.getYears() + months;
-
-        var salary = employee.getSalary();
+        long totalMonths = period.toTotalMonths();
 
 //        var raisePercent = PERCENT_DEFAULT;
 //
-//        if (years >= YEAR_10) {
-//            raisePercent = PERCENT_10;
+//        if (years >= YEAR_MAX) {
+//            raisePercent = PERCENT_MAX;
 //        }
 //
-//        if (years >= YEAR_5) {
-//            raisePercent = PERCENT_05;
+//        if (years >= YEAR_MED) {
+//            raisePercent = PERCENT_MED;
 //        }
 //
-//        if (YEAR_5 > years && years >= YEAR_2_5) {
-//            raisePercent = PERCENT_002;
+//        if (YEAR_MED > years && years >= YEAR_MIN) {
+//            raisePercent = PERCENT_MIN;
 //        }
 
         Percent percent = properties.getPercent();
@@ -54,18 +49,21 @@ public class SmartEmployeeServiceImpl implements EmployeeService {
 
         Year year = properties.getYear();
 
-        if (years >= year.getYear_1()) {
-            raisePercent = percent.getPercent_year_1();
+        double maxMonths = year.getYear_max() * MONTHS_PER_YEAR;
+        if (totalMonths >= maxMonths) {
+            raisePercent = percent.getPercent_year_max();
         }
 
-        if (years >= year.getYear_2()) {
-            raisePercent = percent.getPercent_year_2();
+        double medMonths = year.getYear_med() * MONTHS_PER_YEAR;
+        if (maxMonths > totalMonths && totalMonths >= medMonths) {
+            raisePercent = percent.getPercent_year_med();
         }
 
-        if (year.getYear_2() > years && years >= year.getYear_3()) {
-            raisePercent = percent.getPercent_year_3();
+        double minMonths = year.getYear_min() * MONTHS_PER_YEAR;
+        if (medMonths > totalMonths && totalMonths >= minMonths) {
+            raisePercent = percent.getPercent_year_min();
         }
 
-        return Double.valueOf(salary + (salary * raisePercent)).intValue();
+        return raisePercent;
     }
 }

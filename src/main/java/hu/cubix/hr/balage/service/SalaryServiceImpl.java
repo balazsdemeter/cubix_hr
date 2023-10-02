@@ -16,6 +16,9 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public void setSalary(Employee employee) {
-        employee.setSalary(employeeService.getPayRaisePercent(employee));
+        double payRaisePercent = employeeService.getPayRaisePercent(employee.getWorkStart());
+        Integer oldSalary = employee.getSalary();
+        int newSalary = Double.valueOf(oldSalary + (oldSalary * payRaisePercent)).intValue();
+        employee.setSalary(newSalary);
     }
 }
