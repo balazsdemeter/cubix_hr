@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>HR Application</title>
+</head>
+<body>
+<h3>Welcome to the HR Application</h3>
+
+    <ul>
+        <li th:each="employee : ${employees}">
+            <span th:text="${employee.id}"></span>
+            <span th:text="${employee.job}"></span>
+            <span th:text="${employee.salary}"></span>
+            <span th:text="${employee.workStart}"></span>
+        </li>
+
+    </ul>
+
+    <form th:object="${newEmployee}" method="post" th:action="@{/employee}">
+        Id: <input th:field="*{id}" type="number"/> <br/>
+        Job: <input th:field="*{job}"/> <br/>
+        Salary: <input th:field="*{salary}" type="number"/> <br/>
+        <!-- LocalDateTime convert problem -->
+<!--        Work start: <input th:field="*{workStart}" type="date"/> <br/>-->
+        <input type="submit" value="Create"/>
+    </form>
+</body>
+</html>

@@ -1,18 +1,18 @@
-package hu.cubix.hr.balage.model;
+package hu.cubix.hr.balage.dto;
 
 import java.time.LocalDateTime;
 
-public class Employee {
+public class EmployeeDto {
 
     private Long id;
     private String job;
     private Integer salary;
     private LocalDateTime workStart;
 
-    public Employee() {
+    public EmployeeDto() {
     }
 
-    public Employee(Long id, String job, Integer salary, LocalDateTime workStart) {
+    public EmployeeDto(Long id, String job, Integer salary, LocalDateTime workStart) {
         this.id = id;
         this.job = job;
         this.salary = salary;
