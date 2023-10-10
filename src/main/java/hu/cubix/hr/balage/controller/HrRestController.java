@@ -45,7 +45,7 @@ public class HrRestController {
         return ResponseEntity.ok(employeeDto);
     }
 
-    @GetMapping("/filter")
+    @GetMapping(params = "salary")
     public ResponseEntity<List<EmployeeDto>> filterBySalary(@RequestParam("salary") Integer salary) {
 
         List<EmployeeDto> employeeDtoList = new ArrayList<>(employeeDtos.values());
@@ -53,10 +53,6 @@ public class HrRestController {
         List<EmployeeDto> filteredEmployees = employeeDtoList.stream()
                 .filter(employeeDto -> employeeDto.getSalary() > salary)
                 .collect(Collectors.toList());
-
-        if (filteredEmployees.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
 
         return ResponseEntity.ok(filteredEmployees);
     }

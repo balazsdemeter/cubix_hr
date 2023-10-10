@@ -34,6 +34,6 @@ public class HrApplication implements CommandLineRunner {
     }
 
     private Employee createEmployee(long months) {
-        return new Employee(1L, "munka", 175000, LocalDateTime.now().minusMonths(months));
+        return new Employee(1L, "Test Elek", "munka", 175000, LocalDateTime.now().minusMonths(months));
     }
 }

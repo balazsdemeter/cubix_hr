@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Employee {
 
     private Long id;
+    private String name;
     private String job;
     private Integer salary;
     private LocalDateTime workStart;
@@ -12,8 +13,9 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(Long id, String job, Integer salary, LocalDateTime workStart) {
+    public Employee(Long id, String name, String job, Integer salary, LocalDateTime workStart) {
         this.id = id;
+        this.name = name;
         this.job = job;
         this.salary = salary;
         this.workStart = workStart;
@@ -25,6 +27,14 @@ public class Employee {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getJob() {

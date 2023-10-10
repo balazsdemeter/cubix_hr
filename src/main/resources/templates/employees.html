@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>HR Application</title>
+</head>
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 3px;
+    }
+
+    input {
+        margin: 5px;
+    }
+</style>
+<body>
+<h3>Welcome to the HR Application</h3>
+
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Job</th>
+            <th>Salary</th>
+            <th>Work start</th>
+            <th></th>
+        </tr>
+        <tr th:each="employee : ${employees}">
+            <td th:text="${employee.id}"></td>
+            <td><a th:text="${employee.name}" th:href="@{/updateEmployee/{id}(id=${employee.id})}"></a></td>
+            <td th:text="${employee.job}"></td>
+            <td th:text="${employee.salary}"></td>
+            <td th:text="${employee.workStart}"></td>
+            <td>
+                <form method="post" th:action="@{/deleteEmployee/{id}(id=${employee.id})}">
+                    <input type="submit" value="Delete"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <div>
+        <form th:object="${newEmployee}" method="post" th:action="@{/createEmployee}">
+            Id: <input th:field="*{id}"/> <br/>
+            Name: <input th:field="*{name}"/> <br/>
+            Job: <input th:field="*{job}"/> <br/>
+            Salary: <input th:field="*{salary}" /> <br/>
+            Work start: <input th:field="*{workStart}"/> <br/>
+            <input type="submit" value="Create"/>
+        </form>
+    </div>
+</body>
+</html>
