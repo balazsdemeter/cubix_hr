@@ -1,6 +1,8 @@
 package hu.cubix.hr.balage.controller;
 
 import hu.cubix.hr.balage.dto.EmployeeDto;
+import hu.cubix.hr.balage.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +23,19 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/employees")
-public class HrRestController {
+public class EmployeesRestController {
+
+    private final EmployeeService employeeService;
 
     private Map<Long, EmployeeDto> employeeDtos = new HashMap<>();
 
     {
-        employeeDtos.put(1L, new EmployeeDto(1L, "Teszt munka", 175000, LocalDateTime.now().minusMonths(5)));
+        employeeDtos.put(1L, new EmployeeDto(1L, "Teszt Elek1", "Teszt munka", 175000, LocalDateTime.now().minusMonths(5)));
+    }
+
+    @Autowired
+    public EmployeesRestController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping
@@ -55,6 +64,12 @@ public class HrRestController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(filteredEmployees);
+    }
+
+    @GetMapping("/raisePercentage")
+    public ResponseEntity<Double> getRaisePercentage(@RequestBody EmployeeDto employee) {
+        double raisePercent = employeeService.getPayRaisePercent(employee.getWorkStart());
+        return ResponseEntity.ok(raisePercent);
     }
 
     @PostMapping
