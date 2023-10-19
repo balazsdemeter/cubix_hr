@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.time.Period;
 
-public class SmartEmployeeServiceImpl implements EmployeeService {
+public class SmartEmployeeServiceImpl extends AbstractEmployee {
     private static final int MONTHS_PER_YEAR = 12;
 
 //    private static final double YEAR_MAX = 10;
