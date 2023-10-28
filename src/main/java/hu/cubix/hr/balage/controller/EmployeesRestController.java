@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,13 +52,35 @@ public class EmployeesRestController {
     }
 
     @GetMapping(params = "salary")
-    public ResponseEntity<List<EmployeeDto>> filterBySalary(@RequestParam("salary") Integer salary) {
+    public ResponseEntity<List<EmployeeDto>> findBySalary(@RequestParam("salary") Integer salary) {
         List<Employee> employees = employeeService.findAll();
         List<Employee> filteredEmployees = employees.stream()
                 .filter(employee -> employee.getSalary() > salary)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(employeeMapper.employeesToDtos(filteredEmployees));
+    }
+
+    @GetMapping(params = "job")
+    public ResponseEntity<List<EmployeeDto>> findByJob(@RequestParam("job") String job) {
+        List<Employee> employees = employeeService.findByJob(job);
+        return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
+    }
+
+    @GetMapping(params = {"from", "to"})
+    public ResponseEntity<List<EmployeeDto>> findByDateBetween(@RequestParam("from") String from, @RequestParam("to") String to) {
+
+        List<Employee> employees = employeeService.findByWorkStartDateBetween(
+                LocalDateTime.parse(from, DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                LocalDateTime.parse(to, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        );
+        return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
+    }
+
+    @GetMapping(params = "prefix")
+    public ResponseEntity<List<EmployeeDto>> findByNamePrefix(@RequestParam("prefix") String prefix) {
+        List<Employee> employees = employeeService.findByNamePrefix(prefix);
+        return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
     }
 
     @GetMapping("/raisePercentage")

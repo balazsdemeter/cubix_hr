@@ -19,4 +19,8 @@ public interface EmployeeService {
     Employee save(Employee employee);
 
     void delete(Long id);
+
+    List<Employee> findByJob(String job);
+    List<Employee> findByWorkStartDateBetween(LocalDateTime from, LocalDateTime to);
+    List<Employee> findByNamePrefix(String name);
 }

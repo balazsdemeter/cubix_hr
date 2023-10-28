@@ -1,9 +1,16 @@
 package hu.cubix.hr.balage.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class Employee {
-
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private String job;
@@ -13,8 +20,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(Long id, String name, String job, Integer salary, LocalDateTime workStart) {
-        this.id = id;
+    public Employee(String name, String job, Integer salary, LocalDateTime workStart) {
         this.name = name;
         this.job = job;
         this.salary = salary;

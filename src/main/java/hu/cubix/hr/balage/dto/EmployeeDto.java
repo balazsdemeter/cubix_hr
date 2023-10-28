@@ -13,6 +13,10 @@ public record EmployeeDto(@NotNull Long id, @NotEmpty String name, @NotEmpty Str
         this(0L, null, null, null, null);
     }
 
+    public EmployeeDto(String name, String job, Integer salary, LocalDateTime workStart) {
+        this(0L, name, job, salary, workStart);
+    }
+
     public EmployeeDto(Long id, String name, String job, Integer salary, LocalDateTime workStart) {
         this.id = id;
         this.name = name;

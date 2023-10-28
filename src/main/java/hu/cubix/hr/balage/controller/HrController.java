@@ -1,28 +1,28 @@
 package hu.cubix.hr.balage.controller;
 
 import hu.cubix.hr.balage.model.Employee;
+import hu.cubix.hr.balage.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Controller
 public class HrController {
+    private final EmployeeRepository employeeRepository;
 
-    private List<Employee> employees = new ArrayList<>();
-
-    {
-        employees.add(new Employee(1L, "Teszt Elek", "munka", 175000, LocalDateTime.now().minusMonths(5)));
+    @Autowired
+    public HrController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @GetMapping("/")
     public String home(Map<String, Object> model) {
-        model.put("employees", employees);
+        model.put("employees", employeeRepository.findAll());
         model.put("newEmployee", new Employee());
 
         return "employees";
@@ -50,7 +50,7 @@ public class HrController {
     @PostMapping("/deleteEmployee/{id}")
     public String deleteEmployee(@PathVariable Long id) {
         Employee employee = getEmployee(id);
-        employees.remove(employee);
+        employeeRepository.delete(employee);
 
         return "redirect:/";
     }
@@ -58,11 +58,11 @@ public class HrController {
     @PostMapping("/createEmployee")
     public String createEmployee(Employee employee) {
         employee.setWorkStart(LocalDateTime.now());
-        employees.add(employee);
+        employeeRepository.save(employee);
         return "redirect:/";
     }
 
     private Employee getEmployee(Long id) {
-        return employees.stream().filter(e -> e.getId().equals(id)).findFirst().orElse(new Employee());
+        return employeeRepository.findById(id).orElse(null);
     }
 }

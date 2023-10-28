@@ -3,6 +3,7 @@ package hu.cubix.hr.balage.service;
 import hu.cubix.hr.balage.config.HrConfigurationProperties;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Percent;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Year;
+import hu.cubix.hr.balage.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,10 @@ public class SmartEmployeeServiceImpl extends AbstractEmployee {
 
     @Autowired
     private HrConfigurationProperties properties;
+
+    public SmartEmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        super(employeeRepository);
+    }
 
     @Override
     public double getPayRaisePercent(LocalDateTime workStart) {
