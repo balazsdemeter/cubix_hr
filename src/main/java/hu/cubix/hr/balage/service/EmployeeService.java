@@ -1,6 +1,7 @@
 package hu.cubix.hr.balage.service;
 
 import hu.cubix.hr.balage.model.Employee;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +21,7 @@ public interface EmployeeService {
 
     void delete(Long id);
 
-    List<Employee> findByJob(String job);
+    Page<Employee> findByPositionName(String positionName, int pageNumber, int pageSize);
     List<Employee> findByWorkStartDateBetween(LocalDateTime from, LocalDateTime to);
-    List<Employee> findByNamePrefix(String name);
+    List<Employee> findByNamePrefix(String namePrefix);
 }

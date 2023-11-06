@@ -2,10 +2,11 @@ package hu.cubix.hr.balage.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Employee {
@@ -13,18 +14,22 @@ public class Employee {
     @GeneratedValue
     private Long id;
     private String name;
-    private String job;
+    @ManyToOne
+    private Position position;
     private Integer salary;
     private LocalDateTime workStart;
+    @ManyToOne
+    private Company company;
 
     public Employee() {
     }
 
-    public Employee(String name, String job, Integer salary, LocalDateTime workStart) {
+    public Employee(String name, Position position, Integer salary, LocalDateTime workStart, Company company) {
         this.name = name;
-        this.job = job;
+        this.position = position;
         this.salary = salary;
         this.workStart = workStart;
+        this.company = company;
     }
 
     public Long getId() {
@@ -43,12 +48,12 @@ public class Employee {
         this.name = name;
     }
 
-    public String getJob() {
-        return job;
+    public Position getPosition() {
+        return position;
     }
 
-    public void setJob(String job) {
-        this.job = job;
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     public Integer getSalary() {
@@ -65,5 +70,26 @@ public class Employee {
 
     public void setWorkStart(LocalDateTime workStart) {
         this.workStart = workStart;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

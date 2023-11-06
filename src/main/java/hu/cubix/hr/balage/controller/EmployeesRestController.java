@@ -1,11 +1,13 @@
 package hu.cubix.hr.balage.controller;
 
 import hu.cubix.hr.balage.dto.EmployeeDto;
+import hu.cubix.hr.balage.dto.PageableEmployeeDto;
 import hu.cubix.hr.balage.mapper.EmployeeMapper;
 import hu.cubix.hr.balage.model.Employee;
 import hu.cubix.hr.balage.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeesRestController {
-
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
 
@@ -61,10 +62,23 @@ public class EmployeesRestController {
         return ResponseEntity.ok(employeeMapper.employeesToDtos(filteredEmployees));
     }
 
-    @GetMapping(params = "job")
-    public ResponseEntity<List<EmployeeDto>> findByJob(@RequestParam("job") String job) {
-        List<Employee> employees = employeeService.findByJob(job);
-        return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
+    @GetMapping(params = {"positionName", "pageNumber", "pageSize"})
+    public ResponseEntity<PageableEmployeeDto> findByPositionName(@RequestParam("positionName") String positionName,
+                                                                  @RequestParam("pageNumber") Integer pageNumber,
+                                                                  @RequestParam("pageSize") Integer pageSize) {
+        Page<Employee> employees = employeeService.findByPositionName(positionName, pageNumber, pageSize);
+        PageableEmployeeDto pageEmployeeDto;
+        if (employees != null) {
+            pageEmployeeDto = new PageableEmployeeDto(
+                    employeeMapper.employeesToDtos(employees.stream().toList()),
+                    employees.getTotalPages(),
+                    employees.getTotalElements()
+            );
+        } else {
+            pageEmployeeDto = new PageableEmployeeDto();
+        }
+
+        return ResponseEntity.ok(pageEmployeeDto);
     }
 
     @GetMapping(params = {"from", "to"})
@@ -77,15 +91,15 @@ public class EmployeesRestController {
         return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
     }
 
-    @GetMapping(params = "prefix")
-    public ResponseEntity<List<EmployeeDto>> findByNamePrefix(@RequestParam("prefix") String prefix) {
-        List<Employee> employees = employeeService.findByNamePrefix(prefix);
+    @GetMapping(params = "namePrefix")
+    public ResponseEntity<List<EmployeeDto>> findByNamePrefix(@RequestParam("namePrefix") String namePrefix) {
+        List<Employee> employees = employeeService.findByNamePrefix(namePrefix);
         return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
     }
 
     @GetMapping("/raisePercentage")
     public ResponseEntity<Double> getRaisePercentage(@Valid @RequestBody EmployeeDto employeeDto) {
-        double raisePercent = employeeService.getPayRaisePercent(employeeDto.workStart());
+        double raisePercent = employeeService.getPayRaisePercent(employeeDto.getWorkStart());
         return ResponseEntity.ok(raisePercent);
     }
 

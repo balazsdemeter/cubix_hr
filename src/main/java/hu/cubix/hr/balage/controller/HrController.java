@@ -32,8 +32,9 @@ public class HrController {
     public String updateEmployeeAction(Employee updatedEmployee) {
         Employee employee = getEmployee(updatedEmployee.getId());
         employee.setName(updatedEmployee.getName());
-        employee.setJob(updatedEmployee.getJob());
+        employee.setCompany(updatedEmployee.getCompany());
         employee.setSalary(updatedEmployee.getSalary());
+        employee.setCompany(updatedEmployee.getCompany());
         employee.setWorkStart(updatedEmployee.getWorkStart());
 
         return "redirect:/";

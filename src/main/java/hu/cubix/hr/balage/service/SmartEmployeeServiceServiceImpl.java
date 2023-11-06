@@ -4,12 +4,13 @@ import hu.cubix.hr.balage.config.HrConfigurationProperties;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Percent;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Year;
 import hu.cubix.hr.balage.repository.EmployeeRepository;
+import hu.cubix.hr.balage.repository.PositionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.time.Period;
 
-public class SmartEmployeeServiceImpl extends AbstractEmployee {
+public class SmartEmployeeServiceServiceImpl extends AbstractEmployeeService {
     private static final int MONTHS_PER_YEAR = 12;
 
 //    private static final double YEAR_MAX = 10;
@@ -24,8 +25,8 @@ public class SmartEmployeeServiceImpl extends AbstractEmployee {
     @Autowired
     private HrConfigurationProperties properties;
 
-    public SmartEmployeeServiceImpl(EmployeeRepository employeeRepository) {
-        super(employeeRepository);
+    public SmartEmployeeServiceServiceImpl(EmployeeRepository employeeRepository, CompanyService companyService, PositionRepository positionRepository) {
+        super(employeeRepository, companyService, positionRepository);
     }
 
     @Override

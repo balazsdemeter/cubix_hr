@@ -61,12 +61,30 @@ public class CompaniesRestController {
         return ret;
     }
 
+    @GetMapping(params = "salary")
+    public List<CompanyDto> findByEmployeeSalaryGreaterThan(@RequestParam(name = "salary") Integer salary) {
+        List<Company> companies = companyService.findByEmployeeSalaryGreaterThan(salary);
+        return companyMapper.companiesToDtos(companies);
+    }
+
+    @GetMapping(params = "employeeNumber")
+    public List<CompanyDto> findByEmployeeNumber(@RequestParam(name = "employeeNumber") Integer employeeNumber) {
+        List<Company> companies = companyService.findByEmployeeNumber(employeeNumber);
+        return companyMapper.companiesToDtos(companies);
+    }
+
+    @GetMapping("/{id}/averageSalary")
+    public List<Double> averageSalaryByCompanyId(@PathVariable long id) {
+        return companyService.averageSalaryByCompanyId(id);
+    }
+
     private static CompanyDto copyCompanyDto(CompanyDto companyDto) {
         return new CompanyDto(
                 companyDto.id(),
                 companyDto.registrationNumber(),
                 companyDto.name(),
                 companyDto.address(),
+                companyDto.companyForm(),
                 Collections.emptyList());
     }
 

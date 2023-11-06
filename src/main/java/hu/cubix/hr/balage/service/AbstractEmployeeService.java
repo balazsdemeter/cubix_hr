@@ -2,15 +2,25 @@ package hu.cubix.hr.balage.service;
 
 import hu.cubix.hr.balage.model.Employee;
 import hu.cubix.hr.balage.repository.EmployeeRepository;
+import hu.cubix.hr.balage.repository.PositionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public abstract class AbstractEmployee implements EmployeeService {
+public abstract class AbstractEmployeeService implements EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final CompanyService companyService;
+    private final PositionRepository positionRepository;
 
-    protected AbstractEmployee(EmployeeRepository employeeRepository) {
+    protected AbstractEmployeeService(
+            EmployeeRepository employeeRepository,
+            CompanyService companyService,
+            PositionRepository positionRepository) {
         this.employeeRepository = employeeRepository;
+        this.companyService = companyService;
+        this.positionRepository = positionRepository;
     }
 
     @Override
@@ -41,6 +51,8 @@ public abstract class AbstractEmployee implements EmployeeService {
 
     @Override
     public Employee save(Employee employee) {
+        employee.setCompany(companyService.findByName(employee.getCompany().getName()));
+        employee.setPosition(positionRepository.findByName(employee.getPosition().getName()));
         return employeeRepository.save(employee);
     }
 
@@ -50,8 +62,8 @@ public abstract class AbstractEmployee implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findByJob(String job) {
-        return employeeRepository.findEmployeesByJob(job);
+    public Page<Employee> findByPositionName(String positionName, int pageNumber, int pageSize) {
+        return employeeRepository.findEmployeesByPositionName(positionName, PageRequest.of(pageNumber, pageSize));
     }
 
     @Override
@@ -60,7 +72,7 @@ public abstract class AbstractEmployee implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findByNamePrefix(String name) {
-        return employeeRepository.findEmployeesByNameStartsWith(name.toUpperCase());
+    public List<Employee> findByNamePrefix(String namePrefix) {
+        return employeeRepository.findByNameStartingWithIgnoreCase(namePrefix);
     }
 }
