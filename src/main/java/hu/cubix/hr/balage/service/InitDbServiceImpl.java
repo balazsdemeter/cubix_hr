@@ -58,9 +58,8 @@ public class InitDbServiceImpl implements InitDbService {
                 employees.add(employee);
             }
 
-            employees.forEach(employee -> employee.setCompany(company));
+            company.setEmployees(employees);
             companyRepository.save(company);
-            employeeRepository.saveAll(employees);
         }
     }
 

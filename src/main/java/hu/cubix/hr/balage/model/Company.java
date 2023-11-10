@@ -1,6 +1,7 @@
 package hu.cubix.hr.balage.model;
 
 import hu.cubix.hr.balage.model.enums.CompanyForm;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,7 +23,7 @@ public class Company {
     private String address;
     @Enumerated(EnumType.STRING)
     private CompanyForm companyForm;
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Employee> employees;
 
     public Company() {
@@ -115,7 +116,6 @@ public class Company {
                 ", registrationNumber=" + registrationNumber +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", employees=" + employees +
                 '}';
     }
 }

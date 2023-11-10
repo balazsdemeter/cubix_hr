@@ -1,10 +1,11 @@
 package hu.cubix.hr.balage.service;
 
+import hu.cubix.hr.balage.dto.CompanyDto;
+import hu.cubix.hr.balage.dto.EmployeeDto;
+import hu.cubix.hr.balage.mapper.CompanyMapper;
 import hu.cubix.hr.balage.model.Company;
 import hu.cubix.hr.balage.model.Employee;
 import hu.cubix.hr.balage.repository.CompanyRepository;
-import hu.cubix.hr.balage.repository.EmployeeRepository;
-import hu.cubix.hr.balage.repository.PositionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,79 +16,90 @@ import java.util.List;
 public class CompanyService {
 
     private final CompanyRepository repository;
-    private final EmployeeRepository employeeRepository;
-    private final PositionRepository positionRepository;
+
+    private final CompanyMapper companyMapper;
+
+    private final EmployeeService employeeService;
 
     @Autowired
-    public CompanyService(
-            CompanyRepository repository,
-            EmployeeRepository employeeRepository,
-            PositionRepository positionRepository) {
+    public CompanyService(CompanyRepository repository,
+                          CompanyMapper companyMapper,
+                          EmployeeService employeeService) {
         this.repository = repository;
-        this.employeeRepository = employeeRepository;
-        this.positionRepository = positionRepository;
+        this.companyMapper = companyMapper;
+        this.employeeService = employeeService;
     }
 
-    public List<Company> findAll() {
-        return repository.findAll();
+    @Transactional
+    public List<CompanyDto> findAll() {
+        return companyMapper.companiesToDtos(repository.findAll());
     }
 
-    public Company findById(Long id) {
+    @Transactional
+    public CompanyDto findById(Long id) {
+        return companyMapper.companyToDto(findCompanyById(id));
+    }
+
+    private Company findCompanyById(Long id) {
         return repository.findById(id).orElse(null);
     }
 
-    public Company create(Company company) {
-        if (findById(company.getId()) != null) {
+    @Transactional
+    public CompanyDto create(CompanyDto companyDto) {
+        if (findCompanyById(companyDto.id()) != null) {
             return null;
         }
 
-        return save(company);
+        Company company = save(companyMapper.dtoToCompany(companyDto));
+        return companyMapper.companyToDto(company);
     }
 
-    public Company update(Company company) {
-        if (findById(company.getId()) == null) {
+    @Transactional
+    public CompanyDto update(CompanyDto companyDto) {
+        if (findById(companyDto.id()) == null) {
             return null;
         }
 
-        return save(company);
+        Company company = save(companyMapper.dtoToCompany(companyDto));
+        return companyMapper.companyToDto(company);
     }
 
+    @Transactional
     public Company save(Company company) {
         return repository.save(company);
     }
 
+    @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
+    @Transactional
     public void delete(Long companyId, Long employeeId) {
-        Company company = findById(companyId);
+        Company company = findCompanyById(companyId);
         if (company != null) {
             company.getEmployees().removeIf(employee -> employee.getId().equals(employeeId));
         }
     }
 
-    public Company addEmployee(Long id, Employee employee) {
-        Company company = findById(id);
+    @Transactional
+    public CompanyDto addEmployee(Long id, EmployeeDto employeeDto) {
+        Company company = findCompanyById(id);
         if (company == null) {
             return null;
         }
 
-        manageEmployee(employee, company);
-
-        company.getEmployees().add(employee);
-        return company;
-    }
-
-    private void manageEmployee(Employee employee, Company company) {
+        Employee employee = employeeService.createEmployeeEntity(employeeDto);
         employee.setCompany(company);
-        employee.setPosition(positionRepository.findByName(employee.getPosition().getName()));
-        employeeRepository.save(employee);
+        company.getEmployees().add(employee);
+
+        Company savedCompany = save(company);
+        return companyMapper.companyToDto(savedCompany);
     }
 
     @Transactional
-    public Company refreshEmployees(Long id, List<Employee> newEmployees) {
-        Company company = findById(id);
+    public CompanyDto refreshEmployees(Long id, List<EmployeeDto> employeeDtos) {
+        Company company = findCompanyById(id);
         if (company == null) {
             return null;
         }
@@ -95,23 +107,27 @@ public class CompanyService {
         oldEmployees.forEach(employee -> employee.setCompany(null));
         oldEmployees.clear();
 
-        newEmployees.forEach(employee -> manageEmployee(employee, company));
-        oldEmployees.addAll(newEmployees);
-        return company;
+        employeeDtos.forEach(employeeDto -> oldEmployees.add(employeeService.createEmployeeEntity(employeeDto)));
+        Company savedCompany = save(company);
+        return companyMapper.companyToDto(savedCompany);
     }
 
-    public List<Company> findByEmployeeNumber(Integer employeeNumber) {
-        return repository.findCompaniesByEmployeeNumber(employeeNumber);
+    @Transactional
+    public List<CompanyDto> findByEmployeeNumber(Integer employeeNumber) {
+        return companyMapper.companiesToDtos(repository.findCompaniesByEmployeeNumber(employeeNumber));
     }
 
-    public List<Company> findByEmployeeSalaryGreaterThan(Integer salary) {
-        return repository.findCompaniesByEmployeeSalaryGreaterThan(salary);
+    @Transactional
+    public List<CompanyDto> findByEmployeeSalaryGreaterThan(Integer salary) {
+        return companyMapper.companiesToDtos(repository.findCompaniesByEmployeeSalaryGreaterThan(salary));
     }
 
-    public Company findByName(String name) {
-        return repository.findCompanyByName(name);
+    @Transactional
+    public CompanyDto findByName(String name) {
+        return companyMapper.companyToDto(repository.findCompanyByName(name));
     }
 
+    @Transactional
     public List<Double> averageSalaryByCompanyId(Long id) {
         return repository.averageSalaryByCompanyId(id);
     }

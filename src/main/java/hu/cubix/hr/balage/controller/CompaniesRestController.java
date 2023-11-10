@@ -2,9 +2,6 @@ package hu.cubix.hr.balage.controller;
 
 import hu.cubix.hr.balage.dto.CompanyDto;
 import hu.cubix.hr.balage.dto.EmployeeDto;
-import hu.cubix.hr.balage.mapper.CompanyMapper;
-import hu.cubix.hr.balage.mapper.EmployeeMapper;
-import hu.cubix.hr.balage.model.Company;
 import hu.cubix.hr.balage.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,14 +25,10 @@ import java.util.List;
 public class CompaniesRestController {
 
     private final CompanyService companyService;
-    private final CompanyMapper companyMapper;
-    private final EmployeeMapper employeeMapper;
 
     @Autowired
-    public CompaniesRestController(CompanyService companyService, CompanyMapper companyMapper, EmployeeMapper employeeMapper) {
+    public CompaniesRestController(CompanyService companyService) {
         this.companyService = companyService;
-        this.companyMapper = companyMapper;
-        this.employeeMapper = employeeMapper;
     }
 
 //    @GetMapping
@@ -47,13 +39,13 @@ public class CompaniesRestController {
     @GetMapping
     public List<CompanyDto> findAll(@Nullable @RequestParam(name = "full") Boolean full) {
         List<CompanyDto> ret = new ArrayList<>();
-        Collection<CompanyDto> values = companyMapper.companiesToDtos(companyService.findAll());
+        List<CompanyDto> companyDtos = companyService.findAll();
 
         if (Boolean.TRUE.equals(full)) {
-            ret.addAll(new ArrayList<>(values));
+            ret.addAll(new ArrayList<>(companyDtos));
         } else {
             ret.addAll(
-                    values.stream()
+                    companyDtos.stream()
                             .map(CompaniesRestController::copyCompanyDto)
                             .toList()
             );
@@ -63,14 +55,12 @@ public class CompaniesRestController {
 
     @GetMapping(params = "salary")
     public List<CompanyDto> findByEmployeeSalaryGreaterThan(@RequestParam(name = "salary") Integer salary) {
-        List<Company> companies = companyService.findByEmployeeSalaryGreaterThan(salary);
-        return companyMapper.companiesToDtos(companies);
+        return companyService.findByEmployeeSalaryGreaterThan(salary);
     }
 
     @GetMapping(params = "employeeNumber")
     public List<CompanyDto> findByEmployeeNumber(@RequestParam(name = "employeeNumber") Integer employeeNumber) {
-        List<Company> companies = companyService.findByEmployeeNumber(employeeNumber);
-        return companyMapper.companiesToDtos(companies);
+        return companyService.findByEmployeeNumber(employeeNumber);
     }
 
     @GetMapping("/{id}/averageSalary")
@@ -101,14 +91,12 @@ public class CompaniesRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> findById(@Nullable @RequestParam(name = "full") Boolean full, @PathVariable long id) {
-        CompanyDto companyDto;
-        Company company = companyService.findById(id);
+        CompanyDto companyDto = companyService.findById(id);
 
-        if (company == null) {
+        if (companyDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        companyDto = companyMapper.companyToDto(company);
         if (!Boolean.TRUE.equals(full)) {
             companyDto = copyCompanyDto(companyDto);
         }
@@ -118,12 +106,12 @@ public class CompaniesRestController {
 
     @PostMapping
     public ResponseEntity<CompanyDto> create(@RequestBody CompanyDto companyDto) {
-        Company company = companyService.create(companyMapper.dtoToCompany(companyDto));
-        if (company == null) {
+        CompanyDto savedCompanyDto = companyService.create(companyDto);
+        if (savedCompanyDto == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(companyMapper.companyToDto(company));
+        return ResponseEntity.ok(savedCompanyDto);
     }
 
     @PutMapping("/{id}/updateCompany")
@@ -131,27 +119,27 @@ public class CompaniesRestController {
         if (companyService.findById(id) == null) {
             return ResponseEntity.notFound().build();
         }
-        Company company = companyService.update(companyMapper.dtoToCompany(companyDto));
-        return ResponseEntity.ok(companyMapper.companyToDto(company));
+        CompanyDto updatedCompanyDto = companyService.update(companyDto);
+        return ResponseEntity.ok(updatedCompanyDto);
     }
 
     @PutMapping("/{id}/addEmployee")
     public ResponseEntity<CompanyDto> addEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
-        Company company = companyService.addEmployee(id, employeeMapper.dtoToEmployee(employeeDto));
-        if (company == null) {
+        CompanyDto companyDto = companyService.addEmployee(id, employeeDto);
+        if (companyDto == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(companyMapper.companyToDto(company));
+        return ResponseEntity.ok(companyDto);
     }
 
     @PutMapping("/{id}/refreshEmployees")
     public ResponseEntity<CompanyDto> refreshEmployees(@PathVariable long id, @RequestBody List<EmployeeDto> employeeDtos) {
-        Company company = companyService.refreshEmployees(id, employeeMapper.dtosToEmployees(employeeDtos));
-        if (company == null) {
+        CompanyDto companyDto = companyService.refreshEmployees(id, employeeDtos);
+        if (companyDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(companyMapper.companyToDto(company));
+        return ResponseEntity.ok(companyDto);
     }
 
     @DeleteMapping("/{id}")

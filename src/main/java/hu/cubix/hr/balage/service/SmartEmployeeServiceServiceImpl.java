@@ -3,8 +3,8 @@ package hu.cubix.hr.balage.service;
 import hu.cubix.hr.balage.config.HrConfigurationProperties;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Percent;
 import hu.cubix.hr.balage.config.HrConfigurationProperties.Year;
+import hu.cubix.hr.balage.mapper.EmployeeMapper;
 import hu.cubix.hr.balage.repository.EmployeeRepository;
-import hu.cubix.hr.balage.repository.PositionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -25,8 +25,10 @@ public class SmartEmployeeServiceServiceImpl extends AbstractEmployeeService {
     @Autowired
     private HrConfigurationProperties properties;
 
-    public SmartEmployeeServiceServiceImpl(EmployeeRepository employeeRepository, CompanyService companyService, PositionRepository positionRepository) {
-        super(employeeRepository, companyService, positionRepository);
+    public SmartEmployeeServiceServiceImpl(EmployeeRepository employeeRepository,
+                                           EmployeeMapper employeeMapper,
+                                           PositionService positionService) {
+        super(employeeRepository, employeeMapper, positionService);
     }
 
     @Override

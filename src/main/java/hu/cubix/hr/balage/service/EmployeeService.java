@@ -1,5 +1,6 @@
 package hu.cubix.hr.balage.service;
 
+import hu.cubix.hr.balage.dto.EmployeeDto;
 import hu.cubix.hr.balage.model.Employee;
 import org.springframework.data.domain.Page;
 
@@ -9,19 +10,25 @@ import java.util.List;
 public interface EmployeeService {
     double getPayRaisePercent(LocalDateTime workStart);
 
-    List<Employee> findAll();
+    List<EmployeeDto> findAll();
 
-    Employee findById(Long id);
+    EmployeeDto findById(Long id);
 
-    Employee create(Employee employee);
+    EmployeeDto create(EmployeeDto employeeDto);
 
-    Employee update(Employee employee);
+    EmployeeDto update(EmployeeDto employeeDto);
 
-    Employee save(Employee employee);
+    EmployeeDto save(EmployeeDto employeeDto);
 
     void delete(Long id);
 
-    Page<Employee> findByPositionName(String positionName, int pageNumber, int pageSize);
-    List<Employee> findByWorkStartDateBetween(LocalDateTime from, LocalDateTime to);
-    List<Employee> findByNamePrefix(String namePrefix);
+    Page<EmployeeDto> findByPositionName(String positionName, int pageNumber, int pageSize);
+
+    List<EmployeeDto> findByWorkStartDateBetween(LocalDateTime from, LocalDateTime to);
+
+    List<EmployeeDto> findByNamePrefix(String namePrefix);
+
+    List<EmployeeDto> findEmployeesByExample(EmployeeDto employeeDto);
+
+    Employee createEmployeeEntity(EmployeeDto employeeDto);
 }

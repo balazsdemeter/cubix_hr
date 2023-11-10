@@ -2,7 +2,6 @@ package hu.cubix.hr.balage.controller;
 
 import hu.cubix.hr.balage.dto.EmployeeDto;
 import hu.cubix.hr.balage.dto.PageableEmployeeDto;
-import hu.cubix.hr.balage.mapper.EmployeeMapper;
 import hu.cubix.hr.balage.model.Employee;
 import hu.cubix.hr.balage.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -28,52 +27,46 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/employees")
 public class EmployeesRestController {
     private final EmployeeService employeeService;
-    private final EmployeeMapper employeeMapper;
 
     @Autowired
-    public EmployeesRestController(EmployeeService employeeService, EmployeeMapper employeeMapper) {
+    public EmployeesRestController(EmployeeService employeeService) {
         this.employeeService = employeeService;
-        this.employeeMapper = employeeMapper;
     }
 
     @GetMapping
     public List<EmployeeDto> findAll() {
-        return employeeMapper.employeesToDtos(employeeService.findAll());
+        return employeeService.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> findById(@PathVariable long id) {
-        Employee employee = employeeService.findById(id);
+        EmployeeDto employeeDto = employeeService.findById(id);
 
-        if (employee == null) {
+        if (employeeDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(employeeMapper.employeeToDto(employee));
+        return ResponseEntity.ok(employeeDto);
     }
 
     @GetMapping(params = "salary")
     public ResponseEntity<List<EmployeeDto>> findBySalary(@RequestParam("salary") Integer salary) {
-        List<Employee> employees = employeeService.findAll();
-        List<Employee> filteredEmployees = employees.stream()
+        List<EmployeeDto> employeeDtos = employeeService.findAll();
+        List<EmployeeDto> filteredEmployeesDtos = employeeDtos.stream()
                 .filter(employee -> employee.getSalary() > salary)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(employeeMapper.employeesToDtos(filteredEmployees));
+        return ResponseEntity.ok(filteredEmployeesDtos);
     }
 
     @GetMapping(params = {"positionName", "pageNumber", "pageSize"})
     public ResponseEntity<PageableEmployeeDto> findByPositionName(@RequestParam("positionName") String positionName,
                                                                   @RequestParam("pageNumber") Integer pageNumber,
                                                                   @RequestParam("pageSize") Integer pageSize) {
-        Page<Employee> employees = employeeService.findByPositionName(positionName, pageNumber, pageSize);
+        Page<EmployeeDto> page = employeeService.findByPositionName(positionName, pageNumber, pageSize);
         PageableEmployeeDto pageEmployeeDto;
-        if (employees != null) {
-            pageEmployeeDto = new PageableEmployeeDto(
-                    employeeMapper.employeesToDtos(employees.stream().toList()),
-                    employees.getTotalPages(),
-                    employees.getTotalElements()
-            );
+        if (page != null) {
+            pageEmployeeDto = new PageableEmployeeDto(page.getContent(), page.getTotalPages(), page.getTotalElements());
         } else {
             pageEmployeeDto = new PageableEmployeeDto();
         }
@@ -84,17 +77,17 @@ public class EmployeesRestController {
     @GetMapping(params = {"from", "to"})
     public ResponseEntity<List<EmployeeDto>> findByDateBetween(@RequestParam("from") String from, @RequestParam("to") String to) {
 
-        List<Employee> employees = employeeService.findByWorkStartDateBetween(
+        List<EmployeeDto> employeeDtos = employeeService.findByWorkStartDateBetween(
                 LocalDateTime.parse(from, DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 LocalDateTime.parse(to, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         );
-        return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
+        return ResponseEntity.ok(employeeDtos);
     }
 
     @GetMapping(params = "namePrefix")
     public ResponseEntity<List<EmployeeDto>> findByNamePrefix(@RequestParam("namePrefix") String namePrefix) {
-        List<Employee> employees = employeeService.findByNamePrefix(namePrefix);
-        return ResponseEntity.ok(employeeMapper.employeesToDtos(employees));
+        List<EmployeeDto> employeeDtos = employeeService.findByNamePrefix(namePrefix);
+        return ResponseEntity.ok(employeeDtos);
     }
 
     @GetMapping("/raisePercentage")
@@ -105,11 +98,11 @@ public class EmployeesRestController {
 
     @PostMapping
     public ResponseEntity<EmployeeDto> create(@Valid @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.create(employeeMapper.dtoToEmployee(employeeDto));
-        if (employee == null) {
+        EmployeeDto savedEmployeeDto = employeeService.create(employeeDto);
+        if (savedEmployeeDto == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(employeeMapper.employeeToDto(employee));
+        return ResponseEntity.ok(savedEmployeeDto);
     }
 
     @PutMapping("/{id}")
@@ -117,12 +110,18 @@ public class EmployeesRestController {
         if (employeeService.findById(id) == null) {
             return ResponseEntity.notFound().build();
         }
-        Employee employee = employeeService.update(employeeMapper.dtoToEmployee(employeeDto));
-        return ResponseEntity.ok(employeeMapper.employeeToDto(employee));
+        EmployeeDto updatedEmployeeDto = employeeService.update(employeeDto);
+        return ResponseEntity.ok(updatedEmployeeDto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
         employeeService.delete(id);
+    }
+
+    @GetMapping("/findByDynamically")
+    public ResponseEntity<List<EmployeeDto>> findByDynamically(@RequestBody EmployeeDto employeeDto) {
+        List<EmployeeDto> employeeDtos = employeeService.findEmployeesByExample(employeeDto);
+        return ResponseEntity.ok(employeeDtos);
     }
 }

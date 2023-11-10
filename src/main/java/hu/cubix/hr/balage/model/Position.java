@@ -1,6 +1,7 @@
 package hu.cubix.hr.balage.model;
 
 import hu.cubix.hr.balage.model.enums.Qualification;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Position {
@@ -20,8 +22,6 @@ public class Position {
     @Enumerated(EnumType.STRING)
     private Qualification qualification;
     private Integer minimalSalary;
-    @OneToMany(mappedBy = "position")
-    private List<Employee>  employees;
 
     public Position() {
     }
@@ -64,11 +64,26 @@ public class Position {
         this.minimalSalary = minimalSalary;
     }
 
-    public List<Employee> getEmployees() {
-        return employees;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return Objects.equals(id, position.id) && Objects.equals(name, position.name) && qualification == position.qualification && Objects.equals(minimalSalary, position.minimalSalary);
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, qualification, minimalSalary);
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", qualification=" + qualification +
+                ", minimalSalary=" + minimalSalary +
+                '}';
     }
 }

@@ -4,12 +4,12 @@ import hu.cubix.hr.balage.model.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
     Page<Employee> findEmployeesByPositionName(String positionName, Pageable pageable);
 
     List<Employee> findEmployeesByWorkStartBetween(LocalDateTime date1, LocalDateTime date2);

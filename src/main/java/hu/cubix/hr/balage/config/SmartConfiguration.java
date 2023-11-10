@@ -1,8 +1,8 @@
 package hu.cubix.hr.balage.config;
 
+import hu.cubix.hr.balage.mapper.EmployeeMapper;
 import hu.cubix.hr.balage.repository.EmployeeRepository;
-import hu.cubix.hr.balage.repository.PositionRepository;
-import hu.cubix.hr.balage.service.CompanyService;
+import hu.cubix.hr.balage.service.PositionService;
 import hu.cubix.hr.balage.service.SmartEmployeeServiceServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,21 +13,22 @@ import org.springframework.context.annotation.Profile;
 @Profile("smart")
 public class SmartConfiguration {
     private final EmployeeRepository employeeRepository;
-    private final CompanyService companyService;
-    private final PositionRepository positionRepository;
+
+    private final EmployeeMapper employeeMapper;
+
+    private final PositionService positionService;
 
     @Autowired
-    public SmartConfiguration(
-            EmployeeRepository employeeRepository,
-            CompanyService companyService,
-            PositionRepository positionRepository) {
+    public SmartConfiguration(EmployeeRepository employeeRepository,
+                              EmployeeMapper employeeMapper,
+                              PositionService positionService) {
         this.employeeRepository = employeeRepository;
-        this.companyService = companyService;
-        this.positionRepository = positionRepository;
+        this.employeeMapper = employeeMapper;
+        this.positionService = positionService;
     }
 
     @Bean
     public SmartEmployeeServiceServiceImpl getEmployeeService() {
-        return new SmartEmployeeServiceServiceImpl(employeeRepository, companyService,positionRepository);
+        return new SmartEmployeeServiceServiceImpl(employeeRepository, employeeMapper, positionService);
     }
 }

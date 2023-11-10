@@ -1,5 +1,6 @@
 package hu.cubix.hr.balage.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -91,5 +92,17 @@ public class Employee {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", position=" + position +
+                ", salary=" + salary +
+                ", workStart=" + workStart +
+                ", company=" + company +
+                '}';
     }
 }

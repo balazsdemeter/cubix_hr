@@ -1,9 +1,9 @@
 package hu.cubix.hr.balage.config;
 
+import hu.cubix.hr.balage.mapper.EmployeeMapper;
 import hu.cubix.hr.balage.repository.EmployeeRepository;
-import hu.cubix.hr.balage.repository.PositionRepository;
-import hu.cubix.hr.balage.service.CompanyService;
 import hu.cubix.hr.balage.service.DefaultEmployeeServiceServiceImpl;
+import hu.cubix.hr.balage.service.PositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,21 +14,22 @@ import org.springframework.context.annotation.Profile;
 public class DefaultConfiguration {
 
     private final EmployeeRepository employeeRepository;
-    private final CompanyService companyService;
-    private final PositionRepository positionRepository;
+
+    private final EmployeeMapper employeeMapper;
+
+    private final PositionService positionService;
 
     @Autowired
-    public DefaultConfiguration(
-            EmployeeRepository employeeRepository,
-            CompanyService companyService,
-            PositionRepository positionRepository) {
+    public DefaultConfiguration(EmployeeRepository employeeRepository,
+                                EmployeeMapper employeeMapper,
+                                PositionService positionService) {
         this.employeeRepository = employeeRepository;
-        this.companyService = companyService;
-        this.positionRepository = positionRepository;
+        this.employeeMapper = employeeMapper;
+        this.positionService = positionService;
     }
 
     @Bean
     public DefaultEmployeeServiceServiceImpl getEmployeeService() {
-        return new DefaultEmployeeServiceServiceImpl(employeeRepository, companyService, positionRepository);
+        return new DefaultEmployeeServiceServiceImpl(employeeRepository, employeeMapper, positionService);
     }
 }
